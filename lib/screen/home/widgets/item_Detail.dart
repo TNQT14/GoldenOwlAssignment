@@ -13,6 +13,7 @@ Widget itemDetail(
     BuildContext context, Shoes shoes, double width, bool isCart
     ){
   int colorbg = int.parse("0xFF${shoes.color.substring(1,7)}");
+  print("isCart item_Detail.dart: $isCart");
   return Column(
     crossAxisAlignment: CrossAxisAlignment.center,
     children: [
@@ -53,13 +54,13 @@ Widget itemDetail(
       Row(
         children: [
           Text("${shoes.price}\$", style: txtShoeName,),
-          Spacer(),
+          const Spacer(),
           SizedBox(
             height: 60,
             width: isCart ? 60 : null,
             child: ElevatedButton(
               onPressed: (){
-                if(!isCart){
+                if(isCart == false){
                   context.read<HomeBloc>().add(AddToCart(id: shoes.id));
                 }
               },
@@ -73,13 +74,9 @@ Widget itemDetail(
               ),
               child: isCart
                   ? Image.asset(checkImage, width: 20, height: 20)
-              :Text(
+                  : Text(
                 "Add to cart",
-                style: TextStyle(
-                  color: black,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: txt18wb.copyWith(color: black)
               ),
             ),
           ),

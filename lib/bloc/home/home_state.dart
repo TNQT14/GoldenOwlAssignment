@@ -1,5 +1,5 @@
 
-import '../../model/item.dart';
+import 'package:mobile_intern_assignment/model/cart_model.dart';
 import '../../model/shoe_model.dart';
 
 abstract class HomeState{}
@@ -11,7 +11,7 @@ class HomeLoading extends HomeState {}
 class HomeLoaded extends HomeState{
 
   List<Shoes> listShoes;
-  List<Item> listItem;
+  List<CartModel> listItem;
 
   HomeLoaded({required this.listShoes, required this.listItem});
 }

@@ -1,25 +1,43 @@
-import 'dart:math';
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_intern_assignment/screen/home/widgets/item_Detail.dart';
+import 'package:mobile_intern_assignment/services/cart_serivce.dart';
 import '../../bloc/home/home_bloc.dart';
 import '../../bloc/home/home_event.dart';
 import '../../bloc/home/home_state.dart';
 import '../../constants/const_color.dart';
 import '../../constants/const_image.dart';
 import '../../constants/const_style.dart';
-import '../../model/shoe_model.dart';
 import '../cart/cart_screen.dart';
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (ModalRoute.of(context)?.isCurrent == true) {
+        BlocProvider.of<HomeBloc>(context).add(GetTheProduct());
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context)  {
+
     double width = MediaQuery.of(context).size.width;
     double edge = 300;
+
     return BlocProvider<HomeBloc>(
-        create: (context) => HomeBloc()..add(GetTheProduct()),
+        create: (context) {
+          final homeBloc = HomeBloc();
+          homeBloc.add(GetTheProduct());
+          return homeBloc;
+        },
         child: SafeArea(
           child: Stack(
             children: [
@@ -56,8 +74,35 @@ class HomeScreen extends StatelessWidget {
                         Spacer(),
                         IconButton(onPressed: (){
                           Navigator.pushNamed(context, CartScreen.routesName);
+                          context.read<HomeBloc>().add(GetTheProduct());
                         },
-                            icon: Image.asset(cartImage,height: 30,))
+                          icon:BlocBuilder<HomeBloc, HomeState>(builder: (context, state) {
+                            return Stack(
+                              children: [
+                                Image.asset(cartImage, height: 30),
+                                Positioned(
+                                  right: 0,
+                                  top: 0,
+                                  child: Container(
+                                    height: 20,
+                                    width: 20,
+                                    decoration: BoxDecoration(
+                                      color: yellow,
+                                      borderRadius: BorderRadius.circular(90),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        state is HomeLoaded
+                                            ? state.listItem.length.toString()
+                                            : "0",
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            );
+                          }),
+                        )
                       ],
                     )
                 ),
@@ -76,11 +121,13 @@ class HomeScreen extends StatelessWidget {
                             itemBuilder: (context, index){
                               int indexShoes = state.listItem.indexWhere(
                                       (element) => element.idItem == state.listShoes[index].id);
+                              bool isCart = indexShoes != -1 ? true : false;
+                              print("isCart home_Screen.dart: $isCart");
                               return itemDetail(
                                 context,
                                 state.listShoes[index],
                                 width,
-                                indexShoes != -1,
+                                isCart,
                               );
                             },),
 
@@ -95,4 +142,5 @@ class HomeScreen extends StatelessWidget {
         )
     );
   }
+
 }

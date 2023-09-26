@@ -1,5 +1,9 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mobile_intern_assignment/bloc/cart/cart_bloc.dart';
+import 'package:mobile_intern_assignment/bloc/cart/cart_event.dart';
+import 'package:mobile_intern_assignment/model/cart_model.dart';
 import '../../../constants/const_color.dart';
 import '../../../constants/const_image.dart';
 import '../../../constants/const_style.dart';
@@ -7,7 +11,7 @@ import '../../../model/shoe_model.dart';
 import 'button_Custom.dart';
 
 Widget buildItem(
-    BuildContext context, Shoes shoes, int cartModel
+    BuildContext context, Shoes shoes, CartModel cartModel
     ){
   int color = int.parse("0xFF${shoes.color.substring(1, 7)}");
   return Padding(
@@ -46,7 +50,7 @@ Widget buildItem(
                 ),
                 const SizedBox(height: 5),
                 Text(
-                    "\$100",
+                    "\$${(shoes.price * cartModel.quantity).toStringAsFixed(2)}",
                     style: txt20wb
                 ),
                 const SizedBox(height: 5),
@@ -54,17 +58,23 @@ Widget buildItem(
                   children: [
                     customButton(
                       onTap: () {
-
+                        //button decrease
+                        context
+                            .read<CartBloc>()
+                            .add(DecreaseProduct(cart: cartModel));
                       },
                       image: Image.asset(minusImage,height: 20,),
                       color: gray.withOpacity(0.4),
                     ),
                     const SizedBox(width: 10),
-                    Text("1"),
+                    Text(cartModel.quantity.toString()),
                     const SizedBox(width: 10),
                     customButton(
                       onTap: () {
-
+                        // button +
+                        context
+                            .read<CartBloc>()
+                            .add(IncreaseProduct(cart: cartModel));
                       },
                       image: Image.asset(plusImage,height: 20,),
                       color: gray.withOpacity(0.4),
@@ -72,7 +82,10 @@ Widget buildItem(
                     const Spacer(),
                     customButton(
                       onTap: () {
-
+                        // button delete
+                        context
+                            .read<CartBloc>()
+                            .add(RemoveProduct(cartModel.id));
                       },
                       image: Image.asset(trashImage,height: 20,),
                       color: yellow,

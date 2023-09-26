@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_intern_assignment/routes/routes.dart';
 import 'package:mobile_intern_assignment/screen/home/home_screen.dart';
+
+import 'bloc/home/home_bloc.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +21,10 @@ class MyApp extends StatelessWidget {
       routes: route,
       theme: ThemeData(
       ),
-      home: HomeScreen(),
+      home: BlocProvider<HomeBloc>(
+        create: (context) => HomeBloc(),
+    child: HomeScreen(),
+    ),
     );
   }
 }
